@@ -163,7 +163,14 @@ const CSS = `
 .pf .proj-role {
   font-size: 0.9rem;
   color: var(--muted);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.pf .proj-gist {
+  font-size: 1.08rem;
+  opacity: 0.92;
+  max-width: 58ch;
+  margin-bottom: 1.6rem;
 }
 
 .pf .qa { display: grid; gap: 1.5rem; max-width: 60ch; }
@@ -288,6 +295,7 @@ const PROJECTS = [
     status: "In testing — v2 in progress",
     chip: "building",
     role: "Problem framing, options analysis, ROI case, prototype, field testing",
+    gist: "Replacing the one human step in two-bin kanban — a camera watches the bins so the reorder signal reports itself.",
     links: [{ label: "Repository", url: "https://github.com/adiyengar/inventory-monitor" }],
     qa: [
       [
@@ -323,11 +331,46 @@ const PROJECTS = [
       "I built the ROI calculator before I built the model — camera cost, install, monthly running cost, weighed against hours of manual counting and the cost of a line stopping. If the numbers hadn't worked there was no reason to write any of this. Longer term the shape is a camera and a Raspberry Pi per station, with an admin panel for provisioning new sites.",
   },
   {
+    id: "candy-days",
+    title: "Text-to-claim shift dispatch",
+    status: "Built & deployed — SMS gated on carrier approval",
+    chip: "building",
+    role: "Spec, schema design, build, deployment",
+    gist: "A volunteer texts back 1, 2, or 3 to claim a shift — the hard part is making sure two people can never claim the same one.",
+    links: [],
+    linksNote: "Private repo — real nonprofit's data model. Happy to walk through it on a call.",
+    qa: [
+      [
+        "The problem",
+        "A fundraiser needs volunteers staffing street-corner shifts across a city, on a specific weekend. Matching people to shifts by phone and spreadsheet doesn't scale past a few dozen volunteers, and it's easy for two people to think they both have the same slot.",
+      ],
+      [
+        "What it does",
+        "A volunteer fills out a web form. They're texted their three best-available shifts by scarcity. They reply 1, 2, or 3 to claim one, get a confirmation text, and can text CANCEL later if plans change. A volunteer can hold shifts across multiple days.",
+      ],
+      [
+        "The part that actually matters",
+        "Two people replying to the same shift in the same second must never both win it. That's not a UI problem, it's a database problem — the claim has to be a single atomic Postgres function called directly, never a read-then-write from application code, or a race condition quietly overbooks a shift no one notices until someone shows up to an empty corner.",
+      ],
+      [
+        "The unglamorous half",
+        "The Twilio webhook has to verify every inbound request's signature and reject anything that doesn't match, or anyone can text your system pretending to be a volunteer. Phone numbers get normalized to a strict format on both the form and the server, since a mismatch there silently breaks the lookup that maps a bare \"1\" back to a shift. None of this shows up in a demo, all of it breaks a demo if skipped.",
+      ],
+      [
+        "What surprised me",
+        "The code was the easy part. Sending a real text message from a new phone number requires carrier-level campaign registration that can take days to clear and blocks even sending yourself a test message in the meantime — a compliance step with zero relationship to whether the software works.",
+      ],
+    ],
+    more:
+      "Built spec-first: schema, atomicity rules, and security requirements were fully specified before a line of application code existed, then built end-to-end with Claude Code against that spec — including the parts of the brief that said 'ask me before inventing this.'",
+  },
+  {
     id: "prototypes",
     title: "Prototypes as the argument",
     status: "Ongoing",
     chip: "building",
     role: "Concept, PoC build, stakeholder narrative",
+    gist: "Building working demos instead of requirements docs, so stakeholders argue with a thing instead of nodding at a description of one.",
     links: [
       { label: "Semantic readiness tool", url: "https://github.com/adiyengar/test-rig1" },
       { label: "Compatibility agent demo", url: "https://github.com/adiyengar/does-it-comp" },
@@ -364,6 +407,7 @@ const PROJECTS = [
     status: "Archived — revivable",
     chip: "paused",
     role: "Concept, design, build",
+    gist: "Giving the Fair Play household-labor card system the memory the physical deck never had.",
     links: [{ label: "Repository", url: "https://github.com/adiyengar/FairPlay" }],
     qa: [
       [
@@ -392,6 +436,7 @@ const PROJECTS = [
     status: "Live",
     chip: "live",
     role: "Everything",
+    gist: "A custom-song service stitched together entirely from off-the-shelf tools — live, and unapologetically cheesy.",
     links: [{ label: "thefonduey.com", url: "https://thefonduey.com" }],
     qa: [
       [
@@ -419,6 +464,7 @@ const PROJECTS = [
     status: "In flight",
     chip: "building",
     role: "Problem shaping",
+    gist: "An AI concierge for the show two miles away you'd never otherwise hear about.",
     links: [],
     linksNote: "Nothing to show yet — it's still a problem, not a build.",
     qa: [
@@ -465,26 +511,27 @@ function Project({ p }) {
         <span className={`chip ${p.chip}`}>{p.status}</span>
       </div>
       <p className="proj-role">{p.role}</p>
-      <dl className="qa">
-        {p.qa.map(([q, a]) => (
-          <div key={q}>
-            <dt>{q}</dt>
-            <dd>{a}</dd>
-          </div>
-        ))}
-      </dl>
+      <p className="proj-gist">{p.gist}</p>
       {p.stat && (
         <div className="stat">
           <b>{p.stat.figure}</b>
           <span>{p.stat.caption}</span>
         </div>
       )}
-      {p.more && (
+      <button className="toggle" onClick={() => setOpen(!open)}>
+        {open ? "Show less" : "Read the full story"}
+      </button>
+      {open && (
         <>
-          <button className="toggle" onClick={() => setOpen(!open)}>
-            {open ? "Less" : "One more thing"}
-          </button>
-          {open && (
+          <dl className="qa" style={{ marginTop: "1.4rem" }}>
+            {p.qa.map(([q, a]) => (
+              <div key={q}>
+                <dt>{q}</dt>
+                <dd>{a}</dd>
+              </div>
+            ))}
+          </dl>
+          {p.more && (
             <dl className="qa" style={{ marginTop: "1.4rem" }}>
               <div>
                 <dd>{p.more}</dd>
