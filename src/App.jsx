@@ -88,10 +88,15 @@ const CSS = `
   position: relative;
 }
 .pf .hero-who {
-  font-size: 0.95rem;
-  color: var(--muted);
+  font-size: 1.05rem;
+  color: var(--paper);
+  opacity: 0.9;
   max-width: 52ch;
   position: relative;
+}
+.pf .hero-name {
+  color: var(--accent);
+  font-weight: 700;
 }
 
 /* ---------- generic section ---------- */
@@ -342,7 +347,7 @@ const PROJECTS = [
       ],
       [
         "The same move, on a smaller problem",
-        "Resellers constantly ask whether one product will work with another. Sales reps won't answer — being wrong carries risk. The solutions team resents answering, because it's beneath what they're for. So I built an agent that answers when it can, scores its own confidence, and escalates to a human when the cost of being wrong is too high. A document describing that gets nodded at. A demo gets argued with, and the arguing is the useful part. The linked compatibility-agent demo is that pitch — a deterministic risk gate decides auto-answer versus escalate, never a prompt asked to guess its own confidence.",
+        "Resellers constantly ask whether one product will work with another. Sales reps won't answer — being wrong carries risk. The solutions team can answer, but every question like this pulls them off the deeper technical work they're actually staffed for. So I built an agent that answers when it can, scores its own confidence, and escalates to a human when the cost of being wrong is too high. A document describing that gets nodded at. A demo gets argued with, and the arguing is the useful part. The linked compatibility-agent demo is that pitch — a deterministic risk gate decides auto-answer versus escalate, never a prompt asked to guess its own confidence.",
       ],
     ],
     stat: {
@@ -438,7 +443,7 @@ const KILLED = [
   {
     name: "Alfred",
     body:
-      "A private personal assistant that ran locally on my own device — SwiftUI, calendar integration, nothing going to anyone's cloud. I got it building and running before OpenClaw appeared, did the same job better, gave it away free, and collected a hundred thousand GitHub stars in a few weeks.",
+      "A private personal assistant that ran locally on my own device — SwiftUI, calendar integration, nothing going to anyone's cloud. I had it building and running — then OpenClaw showed up, did the same job better, gave it away for free, and picked up a hundred thousand GitHub stars in a few weeks.",
     verdict:
       "Killed it. When the open-source world solves your problem in public, continuing is ego, not strategy.",
   },
@@ -517,10 +522,11 @@ export default function Portfolio() {
             you what they actually needed.
           </p>
           <p className="hero-who">
-            Adi Iyengar. Engineer by training, with a master's in marketing
-            communications from Medill. I sold experiences in the music festival
-            business, then spent seven years building product at Sling and
-            Ingram Micro. Now I use all of it at once.
+            <span className="hero-name">Adi Iyengar.</span> Engineer by
+            training, with a master's in marketing communications from
+            Medill. I sold experiences in the music festival business, then
+            spent seven years building product at Sling and Ingram Micro.
+            Now I use all of it at once.
           </p>
         </div>
       </header>
@@ -561,9 +567,9 @@ export default function Portfolio() {
             <li>
               <b>Making technical work legible</b>
               <span>
-                The Medill half. Architecture business leaders will actually
-                read, and narratives that survive contact with a steering
-                committee.
+                Translating engineering tradeoffs into architecture business
+                leaders will actually read, and narratives that survive
+                contact with a steering committee.
               </span>
             </li>
           </ul>
@@ -617,8 +623,9 @@ export default function Portfolio() {
               <a href="mailto:adisheshgi@gmail.com">adisheshgi@gmail.com</a>
             </div>
             <div>
-              {/* TODO: swap in your real LinkedIn URL before this goes live */}
-              <a href="#">LinkedIn</a>
+              <a href="https://linkedin.com/in/adisheshiyengar" target="_blank" rel="noreferrer">
+                LinkedIn
+              </a>
             </div>
           </div>
         </div>
