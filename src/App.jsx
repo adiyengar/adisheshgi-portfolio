@@ -337,8 +337,7 @@ const PROJECTS = [
     chip: "building",
     role: "Spec, schema design, build, deployment",
     gist: "A volunteer texts back 1, 2, or 3 to claim a shift — the hard part is making sure two people can never claim the same one.",
-    links: [],
-    linksNote: "Private repo — real nonprofit's data model. Happy to walk through it on a call.",
+    links: [{ label: "Live sign-up form", url: "https://candy-days-dispatch.vercel.app" }],
     qa: [
       [
         "The problem",
