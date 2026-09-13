@@ -196,6 +196,24 @@ const CSS = `
   margin-bottom: 1.6rem;
 }
 
+.pf .tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: -0.4rem 0 1.4rem;
+  max-width: 58ch;
+}
+.pf .tags li {
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  background: rgba(236,234,227,0.05);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.2rem 0.55rem;
+}
+
 .pf .qa { display: grid; gap: 1.5rem; max-width: 60ch; }
 .pf .qa dt {
   font-family: 'Fraunces', serif;
@@ -321,6 +339,7 @@ const CSS = `
 const PROJECTS = [
   {
     id: "does-it-comp",
+    tags: ["Claude API", "Python", "Streamlit", "SQLite", "BeautifulSoup", "pytest", "uv", "Built with Claude Code"],
     title: "Does-It-Comp",
     problem: "“Will this work with that?” is a question nobody wants to own.",
     body:
@@ -356,6 +375,7 @@ const PROJECTS = [
   },
   {
     id: "semantic-readiness",
+    tags: ["Python", "pandas", "NumPy", "SciPy", "Plotly", "Streamlit"],
     title: "Semantic Readiness",
     problem: "Find out your data is the problem before you train on it.",
     body:
@@ -369,7 +389,7 @@ const PROJECTS = [
     solved: [
       [
         "Where it came from",
-        "Our categorization engine ran on semantic search and was right 62% of the time — too good to throw away, nowhere near good enough to trust, and nobody could see why it was wrong. I prototyped a workbench to inspect and correct its predictions instead of writing a spec for one; my team built the real version and took accuracy to 94%. This tool is the generalized, public-data version of the question that work kept raising: was the data ever good enough?",
+        "Our categorization engine ran on semantic search, using open-source embeddings, and was right 52% of the time — too good to throw away, nowhere near good enough to trust, and nobody could see why it was wrong. I prototyped a workbench to inspect and correct its predictions instead of writing a spec for one; my team built the real version and took accuracy to 94%. This tool is the generalized, public-data version of the question that work kept raising: was the data ever good enough?",
       ],
       [
         "The approach",
@@ -387,6 +407,7 @@ const PROJECTS = [
   },
   {
     id: "fairplay",
+    tags: ["Python", "Streamlit", "Supabase", "Built with Cursor"],
     title: "FairPlay",
     problem: "Household work has a system. The system has no memory.",
     body:
@@ -415,6 +436,7 @@ const PROJECTS = [
   },
   {
     id: "kanban",
+    tags: ["OWL-ViT", "Hugging Face Transformers", "PyTorch", "OpenCV", "Python", "SQLAlchemy", "Streamlit"],
     title: "Inventory Monitor",
     problem: "The empty bin nobody reports.",
     body:
@@ -447,6 +469,7 @@ const PROJECTS = [
   },
   {
     id: "candy-days",
+    tags: ["Next.js", "React", "Supabase Postgres", "Twilio", "Vercel", "Playwright", "Built with Claude Code"],
     title: "Candy Days Dispatch",
     problem: "Staffing a city's street corners without double-booking anyone.",
     body:
@@ -475,6 +498,7 @@ const PROJECTS = [
   },
   {
     id: "fonduey",
+    tags: ["n8n", "Typeform", "OpenAI API", "Suno", "Mailchimp"],
     title: "The Fonduey",
     problem: "Take a moment. Make it cheesy.",
     body:
@@ -485,7 +509,7 @@ const PROJECTS = [
     solved: [
       [
         "The approach",
-        "No custom backend anywhere. Typeform collects the brief, n8n orchestrates, an LLM writes the lyrics, Suno records the song, and Mailchimp delivers it. The whole product is glue between tools that already exist.",
+        "No custom backend anywhere. Typeform collects the brief, n8n orchestrates, the OpenAI API writes the lyrics, Suno records the song, and Mailchimp delivers it. The whole product is glue between tools that already exist.",
       ],
       [
         "The decision that mattered",
@@ -549,6 +573,13 @@ function Project({ p }) {
       </div>
       <p className="proj-problem">{p.problem}</p>
       <p className="proj-gist">{p.body}</p>
+      {p.tags && (
+        <ul className="tags" aria-label="Technologies used">
+          {p.tags.map((tag) => (
+            <li key={tag}>{tag}</li>
+          ))}
+        </ul>
+      )}
       <div className="links">
         {p.links.length > 0
           ? p.links.map((l) => (
