@@ -61,6 +61,15 @@ const CSS = `
   to   { transform: translate3d(-3%, 4%, 0) scale(1.08); }
 }
 
+.pf .topbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+  position: relative;
+}
 .pf .wordmark {
   font-family: 'Fraunces', serif;
   font-variation-settings: 'SOFT' 100, 'WONK' 1;
@@ -68,9 +77,19 @@ const CSS = `
   font-size: 0.95rem;
   letter-spacing: 0.01em;
   color: var(--accent);
-  margin-bottom: 3.5rem;
-  position: relative;
 }
+.pf .profiles { display: flex; gap: 0.6rem; }
+.pf .profiles a {
+  font-size: 0.86rem;
+  color: var(--paper);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.4rem 0.8rem;
+  transition: border-color .18s ease, color .18s ease;
+}
+.pf .profiles a:hover { border-color: var(--accent); color: var(--accent); }
+.pf .profiles a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .pf h1 {
   font-size: clamp(2.6rem, 7.5vw, 4.9rem);
@@ -160,10 +179,14 @@ const CSS = `
 .pf .chip.building  { color: var(--accent); }
 .pf .chip.paused    { color: var(--muted); }
 
-.pf .proj-role {
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin-bottom: 0.75rem;
+.pf .proj-problem {
+  font-family: 'Fraunces', serif;
+  font-variation-settings: 'SOFT' 60, 'WONK' 1;
+  font-size: clamp(1.2rem, 2.8vw, 1.45rem);
+  line-height: 1.3;
+  color: var(--accent);
+  max-width: 40ch;
+  margin-bottom: 1rem;
 }
 
 .pf .proj-gist {
@@ -222,7 +245,7 @@ const CSS = `
 }
 
 .pf .links {
-  margin-top: 1.9rem;
+  margin-top: 0.4rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
@@ -237,6 +260,13 @@ const CSS = `
   transition: border-color .18s ease, color .18s ease;
 }
 .pf .links a:hover { border-color: var(--accent); color: var(--accent); }
+.pf .links a.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink);
+  font-weight: 700;
+}
+.pf .links a.primary:hover { background: var(--paper); border-color: var(--paper); color: var(--ink); }
 .pf .links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .pf .links .none {
   font-size: 0.86rem;
@@ -290,197 +320,204 @@ const CSS = `
 
 const PROJECTS = [
   {
-    id: "kanban",
-    title: "The empty bin nobody reports",
-    status: "In testing — v2 in progress",
-    chip: "building",
-    role: "Problem framing, options analysis, ROI case, prototype, field testing",
-    gist: "Replacing the one human step in two-bin kanban — a camera watches the bins so the reorder signal reports itself.",
-    links: [{ label: "Repository", url: "https://github.com/adiyengar/inventory-monitor" }],
-    qa: [
-      [
-        "The system that was already there",
-        "Shop floors run two-bin kanban. Every part has two bins: you work from the front one, and when it empties you pull it forward or flip its card, and that's the reorder signal. It's a genuinely elegant system — nobody has to count anything. The empty bin is the data.",
-      ],
-      [
-        "How it fails",
-        "Apathy. The whole thing hangs on a person doing a small, boring task at the least interesting moment of their day. Nobody flips the card. So the signal never fires, and the failure is invisible right up until the floor grinds to a halt. It doesn't degrade — it works, and then it doesn't.",
-      ],
-      [
-        "So what am I actually building",
-        "Not a parts counter. I'm removing the one human step from a system that otherwise works fine. A camera watching the bins makes the empty bin report itself, which is what the kanban card was always supposed to do.",
-      ],
-      [
-        "Why a camera and not something else",
-        "Load cells under each bin are reliable but mean retrofitting every bin on the floor. IoT dispensers count accurately and cost a fortune. Photo-assisted manual counts are cheap and still manual. Cameras won on one thing: nothing about how people work has to change.",
-      ],
-      [
-        "The first model was wrong",
-        "I started with OWL-ViT — open-vocabulary object detection. Reasonable first guess, completely wrong, and wrong for the same reason a human can't do this job: four hundred loose screws in a bin are not four hundred detectable objects. They overlap, they're identical, they're tiny. The detector fails worse the fuller the bin gets, which is exactly backwards.",
-      ],
-      [
-        "What it is now",
-        "Classical computer vision — pixel-coverage thresholding that estimates how depleted a bin is rather than counting what's in it. That's the right shape, because two-bin kanban never needed a number. It needed a threshold. \"Effectively empty\" is the only fact the system has to get right.",
-      ],
-      [
-        "Where it is",
-        "The density approach is built and needs training data: video of real bins at labelled levels of depletion. Rather than own that dataset myself, I'm building it into an initialisation workflow — each site calibrates against its own bins, parts, and lighting during setup. The data problem becomes a setup step instead of a dependency.",
-      ],
-    ],
-    more:
-      "I built the ROI calculator before I built the model — camera cost, install, monthly running cost, weighed against hours of manual counting and the cost of a line stopping. If the numbers hadn't worked there was no reason to write any of this. Longer term the shape is a camera and a Raspberry Pi per station, with an admin panel for provisioning new sites.",
-  },
-  {
-    id: "candy-days",
-    title: "Text-to-claim shift dispatch",
-    status: "Built & deployed — SMS gated on carrier approval",
-    chip: "building",
-    role: "Spec, schema design, build, deployment",
-    gist: "A volunteer texts back 1, 2, or 3 to claim a shift — the hard part is making sure two people can never claim the same one.",
-    links: [{ label: "Live sign-up form", url: "https://candy-days-dispatch.vercel.app" }],
-    qa: [
-      [
-        "The problem",
-        "A fundraiser needs volunteers staffing street-corner shifts across a city, on a specific weekend. Matching people to shifts by phone and spreadsheet doesn't scale past a few dozen volunteers, and it's easy for two people to think they both have the same slot.",
-      ],
-      [
-        "What it does",
-        "A volunteer fills out a web form. They're texted their three best-available shifts by scarcity. They reply 1, 2, or 3 to claim one, get a confirmation text, and can text CANCEL later if plans change. A volunteer can hold shifts across multiple days.",
-      ],
-      [
-        "The part that actually matters",
-        "Two people replying to the same shift in the same second must never both win it. That's not a UI problem, it's a database problem — the claim has to be a single atomic Postgres function called directly, never a read-then-write from application code, or a race condition quietly overbooks a shift no one notices until someone shows up to an empty corner.",
-      ],
-      [
-        "The unglamorous half",
-        "The Twilio webhook has to verify every inbound request's signature and reject anything that doesn't match, or anyone can text your system pretending to be a volunteer. Phone numbers get normalized to a strict format on both the form and the server, since a mismatch there silently breaks the lookup that maps a bare \"1\" back to a shift. None of this shows up in a demo, all of it breaks a demo if skipped.",
-      ],
-      [
-        "What surprised me",
-        "The code was the easy part. Sending a real text message from a new phone number requires carrier-level campaign registration that can take days to clear and blocks even sending yourself a test message in the meantime — a compliance step with zero relationship to whether the software works.",
-      ],
-    ],
-    more:
-      "Built spec-first: schema, atomicity rules, and security requirements were fully specified before a line of application code existed, then built end-to-end with Claude Code against that spec — including the parts of the brief that said 'ask me before inventing this.'",
-  },
-  {
-    id: "prototypes",
-    title: "Prototypes as the argument",
-    status: "Ongoing",
-    chip: "building",
-    role: "Concept, PoC build, stakeholder narrative",
-    gist: "Building working demos instead of requirements docs, so stakeholders argue with a thing instead of nodding at a description of one.",
+    id: "does-it-comp",
+    title: "Does-It-Comp",
+    problem: "“Will this work with that?” is a question nobody wants to own.",
+    body:
+      "Resellers constantly ask whether one product works with another. Sales reps can often find the answer, but they won't give it — if they're wrong, it's on them. So every one of these questions lands on the solutions team, and each one pulls an engineer off the deeper technical work they're actually staffed for.",
+    status: "Live demo",
+    chip: "live",
     links: [
-      { label: "Semantic readiness tool", url: "https://github.com/adiyengar/test-rig1" },
-      { label: "Compatibility agent demo", url: "https://github.com/adiyengar/does-it-comp" },
+      { label: "Try it", url: "https://does-it-comp.streamlit.app", primary: true },
+      { label: "Code", url: "https://github.com/adiyengar/does-it-comp" },
     ],
-    qa: [
+    solved: [
       [
-        "Why I stopped writing requirements",
-        "A requirements document gets interpreted. A prototype gets used. Building a rough version of what I'm asking for takes about as long as describing it properly, and it ends the argument about what I meant — because everyone is now looking at the same thing and disagreeing with it specifically.",
+        "Reframing it",
+        "This is a risk-ownership problem, not a lookup problem. The value isn't finding the answer — it's an answer that's cited, logged, and backed by the institution instead of by one nervous rep. And when the evidence isn't there, a clean hand-off to a human instead of a guess.",
       ],
       [
-        "The problem",
-        "Our categorisation engine ran on semantic search and got the answer right 62% of the time. That's an awkward number — too good to throw away, nowhere near good enough to trust. And nobody could see why it was wrong, which meant nobody could fix it.",
+        "The approach",
+        "The agent pulls public vendor evidence — Microsoft Teams certified hardware, Cisco compatibility data — and grades it in code. Only an explicit vendor statement that two specific parts work together is strong enough to answer automatically. Everything weaker goes to an expert.",
       ],
       [
-        "What I prototyped",
-        "An internal workbench: a place to inspect what the engine predicted, see what it matched against and how confidently, and correct it where it had gone wrong. I built the prototype instead of specifying it. My team built the real one from there. The linked semantic-readiness tool is the generalized version of that first pass — auditing catalog data for completeness and description quality before it ever reaches a classifier.",
+        "The decision that mattered",
+        "Whether to answer or escalate is decided by a deterministic, unit-tested Python function, never by a prompt. “Escalate if you're unsure” is a suggestion a model can talk itself out of, and a model's opinion of its own confidence isn't a control. The gate scores the situation instead: evidence strength, question type, whether sources disagree, how old the evidence is.",
       ],
       [
-        "The same move, on a smaller problem",
-        "Resellers constantly ask whether one product will work with another. Sales reps won't answer — being wrong carries risk. The solutions team can answer, but every question like this pulls them off the deeper technical work they're actually staffed for. So I built an agent that answers when it can, scores its own confidence, and escalates to a human when the cost of being wrong is too high. A document describing that gets nodded at. A demo gets argued with, and the arguing is the useful part. The linked compatibility-agent demo is that pitch — a deterministic risk gate decides auto-answer versus escalate, never a prompt asked to guess its own confidence.",
+        "Four answers, not two",
+        "Confirmed; compatible with conditions (an adapter, a firmware version); not compatible but here's what is; or escalated. The middle two are where the commercial value is, so they don't get flattened into yes or no.",
+      ],
+      [
+        "Escalation that makes the system smarter",
+        "An escalation arrives with the research done and a draft answer written, so the expert's job is a 30-second verdict rather than a research task. That verdict is saved — the next person to ask the same question gets an instant, cited answer.",
       ],
     ],
-    stat: {
-      figure: "62% → 94%",
-      caption:
-        "Categorisation accuracy, before and after the workbench gave the team a way to see and correct the engine's reasoning.",
-    },
-    more:
-      "Client and product specifics are left out deliberately — both linked repos are the generalized, public-data versions of what's actually in front of stakeholders. Happy to walk through the real thing in detail on a call.",
+  },
+  {
+    id: "semantic-readiness",
+    title: "Semantic Readiness",
+    problem: "Find out your data is the problem before you train on it.",
+    body:
+      "When an auto-categorization engine gets things wrong, the model takes the blame. Often the real cause is the catalog it learned from: empty fields, three-word descriptions, duplicates, and codes that appear twice in fifty thousand rows. Teams usually discover that after the classifier is built, not before.",
+    status: "Live demo",
+    chip: "live",
+    links: [
+      { label: "Try it", url: "https://test-rig1-n5fnqef5pxnjvayjhljumm.streamlit.app", primary: true },
+      { label: "Code", url: "https://github.com/adiyengar/test-rig1" },
+    ],
+    solved: [
+      [
+        "Where it came from",
+        "Our categorization engine ran on semantic search and was right 62% of the time — too good to throw away, nowhere near good enough to trust, and nobody could see why it was wrong. I prototyped a workbench to inspect and correct its predictions instead of writing a spec for one; my team built the real version and took accuracy to 94%. This tool is the generalized, public-data version of the question that work kept raising: was the data ever good enough?",
+      ],
+      [
+        "The approach",
+        "Upload a catalog, map the columns, and get a readiness score out of 100 built from four weighted checks: completeness (30%), description quality (30%), code distribution (20%), and classifier readiness (20%).",
+      ],
+      [
+        "What it tells you",
+        "Not just a score — a fix list. Descriptions too short or mostly numbers to classify, duplicate descriptions mapped to different codes, rare codes with too few examples to learn from, and classes so imbalanced a model will simply ignore the small ones. Results export as a report the data owners can work from.",
+      ],
+      [
+        "Why before, not after",
+        "Cleaning a catalog is cheap compared with training, evaluating, and debugging a classifier and then learning it was starved of signal from day one. The tool moves that discovery to the start of the project.",
+      ],
+    ],
   },
   {
     id: "fairplay",
     title: "FairPlay",
-    status: "Archived — revivable",
+    problem: "Household work has a system. The system has no memory.",
+    body:
+      "Eve Rodsky's Fair Play method makes invisible household labor visible: every task is a card, and whoever holds a card owns all of it — noticing it needs doing, planning it, and doing it. It works. But the deck lives on a kitchen table, the rules blur, and by March nobody remembers who took what. The arguments come back.",
+    status: "Being rebuilt",
     chip: "paused",
-    role: "Concept, design, build",
-    gist: "Giving the Fair Play household-labor card system the memory the physical deck never had.",
-    links: [{ label: "Repository", url: "https://github.com/adiyengar/FairPlay" }],
-    qa: [
+    links: [{ label: "Code", url: "https://github.com/adiyengar/FairPlay", primary: true }],
+    solved: [
       [
-        "The problem",
-        "Household labour is invisible until it's an argument. Eve Rodsky's Fair Play system fixes that with a physical deck of cards — each card is one task, and whoever holds it owns the whole thing: noticing it needs doing, planning it, and doing it.",
+        "The approach",
+        "Cards become shared records. A couple picks the cards that apply to their home and assigns each one an owner, with who conceives, plans, and executes spelled out. Both people see the same board at any time.",
       ],
       [
-        "Why software",
-        "The card system works. But cards live on a kitchen table, the rules blur, and nobody remembers who took what in March. The problem isn't the method — it's that the method has no memory.",
+        "Keeping it honest",
+        "Completions are logged against a minimum standard of care, so “done” means the agreed version of done. Streaks and badges add a light competitive nudge without turning chores into a scoreboard.",
       ],
       [
-        "What it does",
-        "Cards get held by a person. Ownership means the full standard, not just execution. Both people can see who holds what, at any time.",
+        "The decision that mattered",
+        "Deciding what not to port. The physical deck has rituals — handing a card across the table, the weekly check-in — and half of what makes the method work would die in a straight translation to screens. The software holds the memory; the conversations stay human.",
       ],
       [
-        "How it's built",
-        "Streamlit and Supabase, built with Cursor. The database has since lapsed. It can be stood back up, but I'd rather rebuild it than pretend it's live.",
+        "Where it stands",
+        "The first version ran on Streamlit and Supabase. It proved the idea and outgrew the tools: the interface feels stale and the code got clunky. It's being rebuilt rather than patched, and the live link comes back when that's done.",
       ],
     ],
-    more:
-      "The hard part was never the code. It was deciding what not to port. The physical deck has rituals — handing a card over, the weekly conversation — and half of what makes it work would have died in a straight translation to screens.",
+  },
+  {
+    id: "kanban",
+    title: "Inventory Monitor",
+    problem: "The empty bin nobody reports.",
+    body:
+      "Shop floors run two-bin kanban: work from the front bin, and when it's empty, flip its card to trigger a reorder. Nobody has to count anything — the empty bin is the signal. But the whole system hangs on a person doing a boring task at the least interesting moment of their day. When nobody flips the card, the failure is invisible until the line stops.",
+    status: "In testing — v2 in progress",
+    chip: "building",
+    links: [{ label: "Code", url: "https://github.com/adiyengar/inventory-monitor", primary: true }],
+    solved: [
+      [
+        "Reframing it",
+        "Not a parts counter. The job is removing the one human step from a system that otherwise works: a camera watches the bins, so the empty bin reports itself — which is what the kanban card was always meant to do.",
+      ],
+      [
+        "Numbers first",
+        "I built the ROI calculator before the model: camera, install, and running cost against hours of manual counting and the cost of a stopped line. If the numbers hadn't worked, there was no reason to write the rest.",
+      ],
+      [
+        "Why a camera",
+        "Load cells under each bin are reliable but mean retrofitting every bin on the floor. IoT dispensers count accurately and cost a fortune. Photo-assisted counts are cheap and still manual. Cameras won on one thing: nobody has to change how they work.",
+      ],
+      [
+        "The first model was wrong",
+        "I started with open-vocabulary object detection (OWL-ViT). Four hundred loose screws aren't four hundred detectable objects — they overlap, they're identical, they're tiny — so it got worse the fuller the bin was, which is exactly backwards. The rebuild uses classical computer vision that measures how depleted a bin looks instead of counting what's in it. Kanban never needed a number; it needed a threshold.",
+      ],
+      [
+        "Where it stands",
+        "The depletion approach is built and needs training data: footage of real bins at known fill levels. Rather than own that dataset, I'm building calibration into setup, so each site trains against its own bins, parts, and lighting. The long-term shape is a camera and a Raspberry Pi per station, with an admin panel for adding new sites.",
+      ],
+    ],
+  },
+  {
+    id: "candy-days",
+    title: "Candy Days Dispatch",
+    problem: "Staffing a city's street corners without double-booking anyone.",
+    body:
+      "A fundraiser needs volunteers covering street-corner shifts across a city over one weekend. Matching people to shifts by phone and spreadsheet breaks down past a few dozen volunteers, and it's easy for two people to believe they both have the same corner — which nobody notices until someone arrives to find it already taken, or empty.",
+    status: "Built & deployed — SMS awaiting carrier approval",
+    chip: "building",
+    links: [{ label: "Try the sign-up", url: "https://candy-days-dispatch.vercel.app", primary: true }],
+    solved: [
+      [
+        "The approach",
+        "A volunteer fills out a web form and is texted their three best open shifts, ranked by which corners are hardest to fill. They reply 1, 2, or 3 to claim one, get a confirmation, and can text CANCEL if plans change. One person can hold shifts across several days.",
+      ],
+      [
+        "The decision that mattered",
+        "Two people replying for the same shift in the same second must never both get it. That's a database problem, not a UI one: claiming a shift is a single atomic Postgres function, never read-then-write from application code, where a race condition would quietly overbook.",
+      ],
+      [
+        "The unglamorous half",
+        "The Twilio webhook verifies the signature on every incoming text, or anyone could pose as a volunteer. Phone numbers are normalized to one strict format on both the form and the server, because a mismatch silently breaks the lookup that turns a bare “1” back into a shift.",
+      ],
+      [
+        "Where it stands",
+        "The software is done; the phone network isn't. Texting from a new number needs carrier campaign registration, which takes days and blocks even test messages meanwhile. Built spec-first with Claude Code: schema, atomicity rules, and security requirements were written down before any application code.",
+      ],
+    ],
   },
   {
     id: "fonduey",
     title: "The Fonduey",
+    problem: "Take a moment. Make it cheesy.",
+    body:
+      "Life's special moments need to be enjoyed and immortalized — and what better way to celebrate something than with a song? Tell The Fonduey about the person and the occasion, and it writes and records a song just for them. The whole thing is cheesy. That's the point.",
     status: "Live",
     chip: "live",
-    role: "Everything",
-    gist: "A custom-song service stitched together entirely from off-the-shelf tools — live, and unapologetically cheesy.",
-    links: [{ label: "thefonduey.com", url: "https://thefonduey.com" }],
-    qa: [
+    links: [{ label: "Visit thefonduey.com", url: "https://thefonduey.com", primary: true }],
+    solved: [
       [
-        "What it is",
-        "A custom song service. You tell it about a person and an occasion, and it writes and records a song about them. Unapologetically cheesy, which is the point.",
+        "The approach",
+        "No custom backend anywhere. Typeform collects the brief, n8n orchestrates, an LLM writes the lyrics, Suno records the song, and Mailchimp delivers it. The whole product is glue between tools that already exist.",
       ],
       [
-        "How it's built",
-        "Typeform collects the brief, n8n orchestrates, an LLM writes lyrics, Suno records, Mailchimp delivers. No custom backend anywhere — the whole thing is glue between things that already exist.",
+        "The decision that mattered",
+        "Defining a good song before automating anything. Automation is easy until the output is generative — then there's no pass or fail to check against. Without an evaluation standard up front, I'd have built a machine that produced garbage very reliably.",
       ],
       [
         "What it taught me",
-        "Evals. Automation is easy until the output is generative, and then there's no pass or fail to check against. I had to decide what a good song was before automating anything, or I'd have built a machine that produced garbage very reliably.",
-      ],
-      [
-        "The other lesson",
-        "The end-to-end flow beats any single step in it. The lyrics could be perfect and the product still fails if the email lands in spam.",
+        "The end-to-end flow beats any single step in it. The lyrics can be perfect and the product still fails if the email lands in spam.",
       ],
     ],
-    more: null,
   },
   {
     id: "concierge",
-    title: "Event concierge",
-    status: "In flight",
+    title: "Event Concierge",
+    problem: "The show you'd love is two miles away, and you'll never hear about it.",
+    body:
+      "Small artists struggle to find their audience, and big ticketing platforms are bad at discovery — they surface what's already selling. The club night, the unsigned DJ, the new band in your city this week: all invisible unless you already know where to look.",
+    status: "Shaping the problem",
     chip: "building",
-    role: "Problem shaping",
-    gist: "An AI concierge for the show two miles away you'd never otherwise hear about.",
     links: [],
-    linksNote: "Nothing to show yet — it's still a problem, not a build.",
-    qa: [
-      [
-        "The problem",
-        "Small artists can't find their audience, and the big ticketing platforms are bad at discovery — they surface what's already selling. The show you'd love is two miles away and you'll never hear about it.",
-      ],
+    linksNote: "Nothing to click yet — it's still a problem, not a build.",
+    solvedLabel: "Where it's headed",
+    solved: [
       [
         "The idea",
-        "Something you can talk to. It reads what you actually listen to and tells you about club nights, unsigned DJs, and new bands in your city this week. Insider-feeling rather than algorithmic-feeling.",
+        "Something you can talk to. It reads what you actually listen to and tells you what's on nearby this week, in a voice that feels like a friend in the know rather than a recommendation feed.",
       ],
       [
-        "Where it is",
-        "Still shaping the problem. Inventory is the hard part — the shows worth knowing about are exactly the ones with no structured data behind them.",
+        "The hard part",
+        "Inventory. The shows most worth knowing about are exactly the ones with no structured listing behind them, so the first problem to solve is finding them at all — before any of the conversation matters.",
       ],
     ],
-    more: null,
   },
 ];
 
@@ -503,51 +540,48 @@ const KILLED = [
 
 function Project({ p }) {
   const [open, setOpen] = useState(false);
+  const panelId = `${p.id}-solved`;
   return (
-    <article className="proj">
+    <article className="proj" id={p.id}>
       <div className="proj-top">
         <h3>{p.title}</h3>
         <span className={`chip ${p.chip}`}>{p.status}</span>
       </div>
-      <p className="proj-role">{p.role}</p>
-      <p className="proj-gist">{p.gist}</p>
-      {p.stat && (
-        <div className="stat">
-          <b>{p.stat.figure}</b>
-          <span>{p.stat.caption}</span>
-        </div>
-      )}
-      <button className="toggle" onClick={() => setOpen(!open)}>
-        {open ? "Show less" : "Read the full story"}
-      </button>
-      {open && (
-        <>
-          <dl className="qa" style={{ marginTop: "1.4rem" }}>
-            {p.qa.map(([q, a]) => (
-              <div key={q}>
-                <dt>{q}</dt>
-                <dd>{a}</dd>
-              </div>
-            ))}
-          </dl>
-          {p.more && (
-            <dl className="qa" style={{ marginTop: "1.4rem" }}>
-              <div>
-                <dd>{p.more}</dd>
-              </div>
-            </dl>
-          )}
-        </>
-      )}
+      <p className="proj-problem">{p.problem}</p>
+      <p className="proj-gist">{p.body}</p>
       <div className="links">
-        {p.links && p.links.length > 0
+        {p.links.length > 0
           ? p.links.map((l) => (
-              <a key={l.url} href={l.url} target="_blank" rel="noreferrer">
-                {l.label}
+              <a
+                key={l.url}
+                href={l.url}
+                target="_blank"
+                rel="noreferrer"
+                className={l.primary ? "primary" : undefined}
+              >
+                {l.label} ↗
               </a>
             ))
           : p.linksNote && <span className="none">{p.linksNote}</span>}
       </div>
+      <button
+        className="toggle"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-controls={panelId}
+      >
+        {open ? "Hide" : p.solvedLabel || "How I solved it"}
+      </button>
+      {open && (
+        <dl className="qa" id={panelId} style={{ marginTop: "1.4rem" }}>
+          {p.solved.map(([q, a]) => (
+            <div key={q}>
+              <dt>{q}</dt>
+              <dd>{a}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
     </article>
   );
 }
@@ -560,39 +594,49 @@ export default function Portfolio() {
       <header className="hero">
         <div className="hero-glow" />
         <div className="wrap">
-          <div className="wordmark">adisheshgi.com</div>
-          <h1>I turn fuzzy problems into something you can click.</h1>
+          <nav className="topbar" aria-label="Profiles">
+            <div className="wordmark">adisheshgi.com</div>
+            <div className="profiles">
+              <a href="https://linkedin.com/in/adisheshiyengar" target="_blank" rel="noreferrer">
+                LinkedIn ↗
+              </a>
+              <a href="https://github.com/adiyengar" target="_blank" rel="noreferrer">
+                GitHub ↗
+              </a>
+            </div>
+          </nav>
+          <h1>I turn ambiguous AI opportunities into working products.</h1>
           <p className="hero-sub">
-            Most discovery work ends in a deck. Mine ends in a working prototype
-            — something your client can push on, disagree with, and use to tell
-            you what they actually needed.
+            Most discovery work ends in a slide deck. Mine ends in a working
+            prototype, so decision-makers can see the idea, test it against
+            reality, and commit with confidence.
           </p>
           <p className="hero-who">
-            <span className="hero-name">Adi Iyengar.</span> Engineer by
-            training, with a master's in marketing communications from
-            Medill. I sold experiences in the music festival business, then
-            spent seven years building product at Sling and Ingram Micro.
-            Now I use all of it at once.
+            <span className="hero-name">Adi Iyengar.</span> Senior Product
+            Manager for AI at Ingram Micro, previously leading personalization
+            at Sling TV. Before that, I co-founded Grihachikitsa, an in-home
+            healthcare startup in India, and ran brand partnerships in live
+            entertainment. Engineer by training, with a master's from
+            Northwestern's Medill School.
           </p>
         </div>
       </header>
 
       <section className="offer">
         <div className="wrap">
-          <h2 className="sec-head">What I'm useful for</h2>
+          <h2 className="sec-head">How I help</h2>
           <p className="lede">
-            I work with consulting teams who need to move a client from "we
-            think AI could help here" to something concrete, fast. The gap
-            between those two points is where engagements stall, and it's the
-            only thing I do.
+            I help leadership teams move from “AI could help here” to a
+            concrete proof of concept with a clear business case, before
+            significant budget is committed.
           </p>
           <ul className="offer-list">
             <li>
               <b>Discovery that ends in a demo</b>
               <span>
-                Scoping sessions produce a prototype instead of a requirements
-                document. Stakeholders react to a thing, not to a description of
-                a thing.
+                Scoping produces a working prototype instead of a requirements
+                document, so stakeholders align on something real rather than
+                a description of it.
               </span>
             </li>
             <li>
@@ -603,19 +647,19 @@ export default function Portfolio() {
               </span>
             </li>
             <li>
-              <b>Expert judgment into systems</b>
+              <b>Human-in-the-loop AI</b>
               <span>
-                Capturing what your specialists know, and building the human
-                review loop around it so the model has somewhere to be wrong
-                safely.
+                Capturing what your specialists know and designing the review
+                process around the model, so errors are caught before they
+                reach customers.
               </span>
             </li>
             <li>
-              <b>Making technical work legible</b>
+              <b>Clear technical communication</b>
               <span>
-                Translating engineering tradeoffs into architecture business
-                leaders will actually read, and narratives that survive
-                contact with a steering committee.
+                Translating engineering trade-offs into decisions business
+                leaders can act on, with a narrative that holds up in front of
+                a steering committee.
               </span>
             </li>
           </ul>
@@ -626,9 +670,10 @@ export default function Portfolio() {
         <div className="wrap">
           <h2 className="sec-head">The work</h2>
           <p className="lede work-intro">
-            Status labels are accurate. One of these is live, one is archived,
-            and the one at the top is mid-rebuild because the first approach
-            didn't survive testing. I'd rather you know which is which.
+            Each one starts with the problem. If it's interesting, open it up to
+            see how I went after it — and where there's a working version, click
+            through and push on it. Status labels are honest: some are live,
+            some are mid-rebuild, one is still just a problem.
           </p>
           <div style={{ marginTop: "2.5rem" }}>
             {PROJECTS.map((p) => (
@@ -671,6 +716,11 @@ export default function Portfolio() {
             <div>
               <a href="https://linkedin.com/in/adisheshiyengar" target="_blank" rel="noreferrer">
                 LinkedIn
+              </a>
+            </div>
+            <div>
+              <a href="https://github.com/adiyengar" target="_blank" rel="noreferrer">
+                GitHub
               </a>
             </div>
           </div>
