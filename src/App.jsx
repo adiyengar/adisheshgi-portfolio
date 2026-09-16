@@ -338,6 +338,42 @@ const CSS = `
 
 const PROJECTS = [
   {
+    id: "does-it-comp",
+    tags: ["Claude API", "Python", "Streamlit", "SQLite", "BeautifulSoup", "pytest", "uv", "Built with Claude Code"],
+    title: "Product Compatibility Agent",
+    problem: "“Will this work with that?” is a question nobody wants to own.",
+    body:
+      "Resellers constantly ask whether one product works with another. Sales reps can often find the answer, but they won't give it — if they're wrong, it's on them. So every one of these questions lands on the solutions team, and each one pulls an engineer off the deeper technical work they're actually staffed for.",
+    status: "Live demo",
+    chip: "live",
+    links: [
+      { label: "Try it", url: "https://does-it-comp.streamlit.app", primary: true },
+      { label: "Code", url: "https://github.com/adiyengar/does-it-comp" },
+    ],
+    solved: [
+      [
+        "Reframing it",
+        "This is a risk-ownership problem, not a lookup problem. The value isn't finding the answer — it's an answer that's cited, logged, and backed by the institution instead of by one nervous rep. And when the evidence isn't there, a clean hand-off to a human instead of a guess.",
+      ],
+      [
+        "The approach",
+        "The agent pulls public vendor evidence — Microsoft Teams certified hardware, Cisco compatibility data — and grades it in code. Only an explicit vendor statement that two specific parts work together is strong enough to answer automatically. Everything weaker goes to an expert.",
+      ],
+      [
+        "The decision that mattered",
+        "Whether to answer or escalate is decided by a deterministic, unit-tested Python function, never by a prompt. “Escalate if you're unsure” is a suggestion a model can talk itself out of, and a model's opinion of its own confidence isn't a control. The gate scores the situation instead: evidence strength, question type, whether sources disagree, how old the evidence is.",
+      ],
+      [
+        "Four answers, not two",
+        "Confirmed; compatible with conditions (an adapter, a firmware version); not compatible but here's what is; or escalated. The middle two are where the commercial value is, so they don't get flattened into yes or no.",
+      ],
+      [
+        "Escalation that makes the system smarter",
+        "An escalation arrives with the research done and a draft answer written, so the expert's job is a 30-second verdict rather than a research task. That verdict is saved — the next person to ask the same question gets an instant, cited answer.",
+      ],
+    ],
+  },
+  {
     id: "candy-days",
     tags: ["Next.js", "React", "Supabase Postgres", "Twilio", "Vercel", "Playwright", "Built with Claude Code"],
     title: "Candy Days Dispatch",
@@ -457,42 +493,6 @@ const PROJECTS = [
       [
         "Where it stands",
         "The first version ran on Streamlit and Supabase. It proved the idea and outgrew the tools: the interface feels stale and the code got clunky. It's being rebuilt rather than patched, and the live link comes back when that's done.",
-      ],
-    ],
-  },
-  {
-    id: "does-it-comp",
-    tags: ["Claude API", "Python", "Streamlit", "SQLite", "BeautifulSoup", "pytest", "uv", "Built with Claude Code"],
-    title: "Product Compatibility Agent",
-    problem: "“Will this work with that?” is a question nobody wants to own.",
-    body:
-      "Resellers constantly ask whether one product works with another. Sales reps can often find the answer, but they won't give it — if they're wrong, it's on them. So every one of these questions lands on the solutions team, and each one pulls an engineer off the deeper technical work they're actually staffed for.",
-    status: "Live demo",
-    chip: "live",
-    links: [
-      { label: "Try it", url: "https://does-it-comp.streamlit.app", primary: true },
-      { label: "Code", url: "https://github.com/adiyengar/does-it-comp" },
-    ],
-    solved: [
-      [
-        "Reframing it",
-        "This is a risk-ownership problem, not a lookup problem. The value isn't finding the answer — it's an answer that's cited, logged, and backed by the institution instead of by one nervous rep. And when the evidence isn't there, a clean hand-off to a human instead of a guess.",
-      ],
-      [
-        "The approach",
-        "The agent pulls public vendor evidence — Microsoft Teams certified hardware, Cisco compatibility data — and grades it in code. Only an explicit vendor statement that two specific parts work together is strong enough to answer automatically. Everything weaker goes to an expert.",
-      ],
-      [
-        "The decision that mattered",
-        "Whether to answer or escalate is decided by a deterministic, unit-tested Python function, never by a prompt. “Escalate if you're unsure” is a suggestion a model can talk itself out of, and a model's opinion of its own confidence isn't a control. The gate scores the situation instead: evidence strength, question type, whether sources disagree, how old the evidence is.",
-      ],
-      [
-        "Four answers, not two",
-        "Confirmed; compatible with conditions (an adapter, a firmware version); not compatible but here's what is; or escalated. The middle two are where the commercial value is, so they don't get flattened into yes or no.",
-      ],
-      [
-        "Escalation that makes the system smarter",
-        "An escalation arrives with the research done and a draft answer written, so the expert's job is a 30-second verdict rather than a research task. That verdict is saved — the next person to ask the same question gets an instant, cited answer.",
       ],
     ],
   },
