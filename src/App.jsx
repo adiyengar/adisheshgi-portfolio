@@ -340,7 +340,7 @@ const PROJECTS = [
   {
     id: "does-it-comp",
     tags: ["Claude API", "Python", "Streamlit", "SQLite", "BeautifulSoup", "pytest", "uv", "Built with Claude Code"],
-    title: "Does-It-Comp",
+    title: "Product Compatibility Agent",
     problem: "“Will this work with that?” is a question nobody wants to own.",
     body:
       "Resellers constantly ask whether one product works with another. Sales reps can often find the answer, but they won't give it — if they're wrong, it's on them. So every one of these questions lands on the solutions team, and each one pulls an engineer off the deeper technical work they're actually staffed for.",
