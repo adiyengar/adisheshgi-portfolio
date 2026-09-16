@@ -338,38 +338,31 @@ const CSS = `
 
 const PROJECTS = [
   {
-    id: "does-it-comp",
-    tags: ["Claude API", "Python", "Streamlit", "SQLite", "BeautifulSoup", "pytest", "uv", "Built with Claude Code"],
-    title: "Product Compatibility Agent",
-    problem: "“Will this work with that?” is a question nobody wants to own.",
+    id: "candy-days",
+    tags: ["Next.js", "React", "Supabase Postgres", "Twilio", "Vercel", "Playwright", "Built with Claude Code"],
+    title: "Candy Days Dispatch",
+    problem: "Staffing a city's street corners without double-booking anyone.",
     body:
-      "Resellers constantly ask whether one product works with another. Sales reps can often find the answer, but they won't give it — if they're wrong, it's on them. So every one of these questions lands on the solutions team, and each one pulls an engineer off the deeper technical work they're actually staffed for.",
-    status: "Live demo",
-    chip: "live",
-    links: [
-      { label: "Try it", url: "https://does-it-comp.streamlit.app", primary: true },
-      { label: "Code", url: "https://github.com/adiyengar/does-it-comp" },
-    ],
+      "A fundraiser needs volunteers covering street-corner shifts across a city over one weekend. Matching people to shifts by phone and spreadsheet breaks down past a few dozen volunteers, and it's easy for two people to believe they both have the same corner — which nobody notices until someone arrives to find it already taken, or empty.",
+    status: "Built & deployed — SMS awaiting carrier approval",
+    chip: "building",
+    links: [{ label: "Try the sign-up", url: "https://candy-days-dispatch.vercel.app", primary: true }],
     solved: [
       [
-        "Reframing it",
-        "This is a risk-ownership problem, not a lookup problem. The value isn't finding the answer — it's an answer that's cited, logged, and backed by the institution instead of by one nervous rep. And when the evidence isn't there, a clean hand-off to a human instead of a guess.",
-      ],
-      [
         "The approach",
-        "The agent pulls public vendor evidence — Microsoft Teams certified hardware, Cisco compatibility data — and grades it in code. Only an explicit vendor statement that two specific parts work together is strong enough to answer automatically. Everything weaker goes to an expert.",
+        "A volunteer fills out a web form and is texted their three best open shifts, ranked by which corners are hardest to fill. They reply 1, 2, or 3 to claim one, get a confirmation, and can text CANCEL if plans change. One person can hold shifts across several days.",
       ],
       [
         "The decision that mattered",
-        "Whether to answer or escalate is decided by a deterministic, unit-tested Python function, never by a prompt. “Escalate if you're unsure” is a suggestion a model can talk itself out of, and a model's opinion of its own confidence isn't a control. The gate scores the situation instead: evidence strength, question type, whether sources disagree, how old the evidence is.",
+        "Two people replying for the same shift in the same second must never both get it. That's a database problem, not a UI one: claiming a shift is a single atomic Postgres function, never read-then-write from application code, where a race condition would quietly overbook.",
       ],
       [
-        "Four answers, not two",
-        "Confirmed; compatible with conditions (an adapter, a firmware version); not compatible but here's what is; or escalated. The middle two are where the commercial value is, so they don't get flattened into yes or no.",
+        "The unglamorous half",
+        "The Twilio webhook verifies the signature on every incoming text, or anyone could pose as a volunteer. Phone numbers are normalized to one strict format on both the form and the server, because a mismatch silently breaks the lookup that turns a bare “1” back into a shift.",
       ],
       [
-        "Escalation that makes the system smarter",
-        "An escalation arrives with the research done and a draft answer written, so the expert's job is a 30-second verdict rather than a research task. That verdict is saved — the next person to ask the same question gets an instant, cited answer.",
+        "Where it stands",
+        "The software is done; the phone network isn't. Texting from a new number needs carrier campaign registration, which takes days and blocks even test messages meanwhile. Built spec-first with Claude Code: schema, atomicity rules, and security requirements were written down before any application code.",
       ],
     ],
   },
@@ -402,35 +395,6 @@ const PROJECTS = [
       [
         "Why before, not after",
         "Cleaning a catalog is cheap compared with training, evaluating, and debugging a classifier and then learning it was starved of signal from day one. The tool moves that discovery to the start of the project.",
-      ],
-    ],
-  },
-  {
-    id: "fairplay",
-    tags: ["Python", "Streamlit", "Supabase", "Built with Cursor"],
-    title: "FairPlay",
-    problem: "Household work has a system. The system has no memory.",
-    body:
-      "Eve Rodsky's Fair Play method makes invisible household labor visible: every task is a card, and whoever holds a card owns all of it — noticing it needs doing, planning it, and doing it. It works. But the deck lives on a kitchen table, the rules blur, and by March nobody remembers who took what. The arguments come back.",
-    status: "Being rebuilt",
-    chip: "paused",
-    links: [{ label: "Code", url: "https://github.com/adiyengar/FairPlay", primary: true }],
-    solved: [
-      [
-        "The approach",
-        "Cards become shared records. A couple picks the cards that apply to their home and assigns each one an owner, with who conceives, plans, and executes spelled out. Both people see the same board at any time.",
-      ],
-      [
-        "Keeping it honest",
-        "Completions are logged against a minimum standard of care, so “done” means the agreed version of done. Streaks and badges add a light competitive nudge without turning chores into a scoreboard.",
-      ],
-      [
-        "The decision that mattered",
-        "Deciding what not to port. The physical deck has rituals — handing a card across the table, the weekly check-in — and half of what makes the method work would die in a straight translation to screens. The software holds the memory; the conversations stay human.",
-      ],
-      [
-        "Where it stands",
-        "The first version ran on Streamlit and Supabase. It proved the idea and outgrew the tools: the interface feels stale and the code got clunky. It's being rebuilt rather than patched, and the live link comes back when that's done.",
       ],
     ],
   },
@@ -468,31 +432,67 @@ const PROJECTS = [
     ],
   },
   {
-    id: "candy-days",
-    tags: ["Next.js", "React", "Supabase Postgres", "Twilio", "Vercel", "Playwright", "Built with Claude Code"],
-    title: "Candy Days Dispatch",
-    problem: "Staffing a city's street corners without double-booking anyone.",
+    id: "fairplay",
+    tags: ["Python", "Streamlit", "Supabase", "Built with Cursor"],
+    title: "FairPlay",
+    problem: "Household work has a system. The system has no memory.",
     body:
-      "A fundraiser needs volunteers covering street-corner shifts across a city over one weekend. Matching people to shifts by phone and spreadsheet breaks down past a few dozen volunteers, and it's easy for two people to believe they both have the same corner — which nobody notices until someone arrives to find it already taken, or empty.",
-    status: "Built & deployed — SMS awaiting carrier approval",
-    chip: "building",
-    links: [{ label: "Try the sign-up", url: "https://candy-days-dispatch.vercel.app", primary: true }],
+      "Eve Rodsky's Fair Play method makes invisible household labor visible: every task is a card, and whoever holds a card owns all of it — noticing it needs doing, planning it, and doing it. It works. But the deck lives on a kitchen table, the rules blur, and by March nobody remembers who took what. The arguments come back.",
+    status: "Being rebuilt",
+    chip: "paused",
+    links: [{ label: "Code", url: "https://github.com/adiyengar/FairPlay", primary: true }],
     solved: [
       [
         "The approach",
-        "A volunteer fills out a web form and is texted their three best open shifts, ranked by which corners are hardest to fill. They reply 1, 2, or 3 to claim one, get a confirmation, and can text CANCEL if plans change. One person can hold shifts across several days.",
+        "Cards become shared records. A couple picks the cards that apply to their home and assigns each one an owner, with who conceives, plans, and executes spelled out. Both people see the same board at any time.",
+      ],
+      [
+        "Keeping it honest",
+        "Completions are logged against a minimum standard of care, so “done” means the agreed version of done. Streaks and badges add a light competitive nudge without turning chores into a scoreboard.",
       ],
       [
         "The decision that mattered",
-        "Two people replying for the same shift in the same second must never both get it. That's a database problem, not a UI one: claiming a shift is a single atomic Postgres function, never read-then-write from application code, where a race condition would quietly overbook.",
-      ],
-      [
-        "The unglamorous half",
-        "The Twilio webhook verifies the signature on every incoming text, or anyone could pose as a volunteer. Phone numbers are normalized to one strict format on both the form and the server, because a mismatch silently breaks the lookup that turns a bare “1” back into a shift.",
+        "Deciding what not to port. The physical deck has rituals — handing a card across the table, the weekly check-in — and half of what makes the method work would die in a straight translation to screens. The software holds the memory; the conversations stay human.",
       ],
       [
         "Where it stands",
-        "The software is done; the phone network isn't. Texting from a new number needs carrier campaign registration, which takes days and blocks even test messages meanwhile. Built spec-first with Claude Code: schema, atomicity rules, and security requirements were written down before any application code.",
+        "The first version ran on Streamlit and Supabase. It proved the idea and outgrew the tools: the interface feels stale and the code got clunky. It's being rebuilt rather than patched, and the live link comes back when that's done.",
+      ],
+    ],
+  },
+  {
+    id: "does-it-comp",
+    tags: ["Claude API", "Python", "Streamlit", "SQLite", "BeautifulSoup", "pytest", "uv", "Built with Claude Code"],
+    title: "Product Compatibility Agent",
+    problem: "“Will this work with that?” is a question nobody wants to own.",
+    body:
+      "Resellers constantly ask whether one product works with another. Sales reps can often find the answer, but they won't give it — if they're wrong, it's on them. So every one of these questions lands on the solutions team, and each one pulls an engineer off the deeper technical work they're actually staffed for.",
+    status: "Live demo",
+    chip: "live",
+    links: [
+      { label: "Try it", url: "https://does-it-comp.streamlit.app", primary: true },
+      { label: "Code", url: "https://github.com/adiyengar/does-it-comp" },
+    ],
+    solved: [
+      [
+        "Reframing it",
+        "This is a risk-ownership problem, not a lookup problem. The value isn't finding the answer — it's an answer that's cited, logged, and backed by the institution instead of by one nervous rep. And when the evidence isn't there, a clean hand-off to a human instead of a guess.",
+      ],
+      [
+        "The approach",
+        "The agent pulls public vendor evidence — Microsoft Teams certified hardware, Cisco compatibility data — and grades it in code. Only an explicit vendor statement that two specific parts work together is strong enough to answer automatically. Everything weaker goes to an expert.",
+      ],
+      [
+        "The decision that mattered",
+        "Whether to answer or escalate is decided by a deterministic, unit-tested Python function, never by a prompt. “Escalate if you're unsure” is a suggestion a model can talk itself out of, and a model's opinion of its own confidence isn't a control. The gate scores the situation instead: evidence strength, question type, whether sources disagree, how old the evidence is.",
+      ],
+      [
+        "Four answers, not two",
+        "Confirmed; compatible with conditions (an adapter, a firmware version); not compatible but here's what is; or escalated. The middle two are where the commercial value is, so they don't get flattened into yes or no.",
+      ],
+      [
+        "Escalation that makes the system smarter",
+        "An escalation arrives with the research done and a draft answer written, so the expert's job is a 30-second verdict rather than a research task. That verdict is saved — the next person to ask the same question gets an instant, cited answer.",
       ],
     ],
   },
